@@ -86,7 +86,10 @@ export default class ReactGauge extends React.Component {
 
     let needleStyle = {
       transformOrigin: '100% 50% 0',
-      transform: `rotate(${degrees}deg)`
+      transform: `rotate(${degrees}deg)`,
+      OTransition: 'transform 250ms ease-in',
+      MozTransition: 'transform 250ms ease-in',
+      WebkitTransition: 'transform 250ms ease-in'
     }
 
     // Text
