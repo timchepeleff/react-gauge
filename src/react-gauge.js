@@ -5,22 +5,29 @@ function roundTwoDecimals(number) {
   return Math.round(number * 100) / 100;
 }
 
+
+const defaultProps = {
+	colors: {
+		blue: '#255C69',
+		green: '#2A7F40',
+		orange: '#AA7139',
+		red: '#AA4639'
+	},
+	width: 500,
+	height: 250,
+	min: 0,
+	max: 100,
+	value: 0
+};
+
 export default class ReactGauge extends React.Component {
+
   constructor(props) {
     super(props);
-
     this.state = {
       width: this.props.width,
       height: this.props.height
     }
-
-    this.colors = {
-      blue: '#255C69',
-      green: '#2A7F40',
-      orange: '#AA7139',
-      red: '#AA4639'
-    }
-
     window.onresize = this.resizeGauge.bind(this);
   }
 
@@ -28,19 +35,23 @@ export default class ReactGauge extends React.Component {
     this.resizeGauge();
   }
 
-  resizeGauge() {
+	resizeGauge() {
+
+		const width = this.props.width;
+		const height = this.props.height;
+
     if (window.innerWidth > ReactGauge.defaultProps.width) {
       if (this.state.width < ReactGauge.defaultProps.width) {
         this.setState({
-          width: ReactGauge.defaultProps.width,
-          height: ReactGauge.defaultProps.width * .5
+          width: width || ReactGauge.defaultProps.width,
+          height: height || ReactGauge.defaultProps.width * .5
         });
       }
 
     } else {
       this.setState({
-        width: window.innerWidth,
-        height: window.innerWidth * .5
+        width: width || window.innerWidth,
+        height: height || window.innerWidth * .5
       });
     }
   }
@@ -105,14 +116,13 @@ export default class ReactGauge extends React.Component {
 
   render() {
     let styles = this.getStyles();
-    console.log(styles.needlePath.d);
-
+		const viewBox = "0 0 " + this.state.width + ' ' + this.state.height;
     return(
-      <svg width={ this.state.width } height={ this.state.height }>
+      <svg width={ this.state.width } viewBox={viewBox} maxHheight={ this.state.height }>
         <circle r={ styles.outerCircle.r }
             cx={ styles.outerCircle.cx  }
             cy={ styles.outerCircle.cy }
-            fill={ this.colors.blue }>
+            fill={ this.props.colors.blue }>
         </circle>
         <circle r={ styles.innerCircle.r }
             cx={ styles.innerCircle.cx }
@@ -123,18 +133,18 @@ export default class ReactGauge extends React.Component {
           fontSize={ styles.textStyle.fontSize }
           fontFamily='Arimo'
           textAnchor='middle'
-          fill={ this.colors.blue }>
+          fill={ this.props.colors.blue }>
             { styles.textStyle.text }
         </text>
         <g className="needle">
           <circle r={ styles.needleCircle.r }
               cx={ styles.needleCircle.cx  }
               cy={ styles.needleCircle.cy }
-              fill={ this.colors.red }>
+              fill={ this.props.colors.red }>
           </circle>
           <path style={ styles.needleStyle }
               d={ styles.needlePath.d }
-              stroke={ this.colors.red }
+              stroke={ this.props.colors.red }
               strokeWidth={ styles.needlePath.strokeWidth }>
           </path>
         </g>
@@ -142,4 +152,4 @@ export default class ReactGauge extends React.Component {
     )
   }
 }
-ReactGauge.defaultProps = { width: 500, height: 250, min: 0, max: 100, value: 0};
+ReactGauge.defaultProps = defaultProps;
