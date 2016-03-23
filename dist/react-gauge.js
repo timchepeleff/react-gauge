@@ -1,10 +1,10 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -23,7 +23,21 @@ function roundTwoDecimals(number) {
   return Math.round(number * 100) / 100;
 }
 
-var ReactGauge = (function (_React$Component) {
+var defaultProps = {
+  colors: {
+    blue: '#255C69',
+    green: '#2A7F40',
+    orange: '#AA7139',
+    red: '#AA4639'
+  },
+  width: 500,
+  height: 250,
+  min: 0,
+  max: 100,
+  value: 0
+};
+
+var ReactGauge = function (_React$Component) {
   _inherits(ReactGauge, _React$Component);
 
   function ReactGauge(props) {
@@ -35,14 +49,6 @@ var ReactGauge = (function (_React$Component) {
       width: _this.props.width,
       height: _this.props.height
     };
-
-    _this.colors = {
-      blue: '#255C69',
-      green: '#2A7F40',
-      orange: '#AA7139',
-      red: '#AA4639'
-    };
-
     window.onresize = _this.resizeGauge.bind(_this);
     return _this;
   }
@@ -55,17 +61,21 @@ var ReactGauge = (function (_React$Component) {
   }, {
     key: 'resizeGauge',
     value: function resizeGauge() {
+
+      var width = this.props.width;
+      var height = this.props.height;
+
       if (window.innerWidth > ReactGauge.defaultProps.width) {
         if (this.state.width < ReactGauge.defaultProps.width) {
           this.setState({
-            width: ReactGauge.defaultProps.width,
-            height: ReactGauge.defaultProps.width * .5
+            width: width || ReactGauge.defaultProps.width,
+            height: height || ReactGauge.defaultProps.width * .5
           });
         }
       } else {
         this.setState({
-          width: window.innerWidth,
-          height: window.innerWidth * .5
+          width: width || window.innerWidth,
+          height: height || window.innerWidth * .5
         });
       }
     }
@@ -132,15 +142,14 @@ var ReactGauge = (function (_React$Component) {
     key: 'render',
     value: function render() {
       var styles = this.getStyles();
-      console.log(styles.needlePath.d);
-
+      var viewBox = "0 0 " + this.state.width + ' ' + this.state.height;
       return _react2.default.createElement(
         'svg',
-        { width: this.state.width, height: this.state.height },
+        { width: this.state.width, viewBox: viewBox, height: this.state.height },
         _react2.default.createElement('circle', { r: styles.outerCircle.r,
           cx: styles.outerCircle.cx,
           cy: styles.outerCircle.cy,
-          fill: this.colors.blue }),
+          fill: this.props.colors.blue }),
         _react2.default.createElement('circle', { r: styles.innerCircle.r,
           cx: styles.innerCircle.cx,
           cy: styles.innerCircle.cy,
@@ -151,7 +160,7 @@ var ReactGauge = (function (_React$Component) {
             fontSize: styles.textStyle.fontSize,
             fontFamily: 'Arimo',
             textAnchor: 'middle',
-            fill: this.colors.blue },
+            fill: this.props.colors.blue },
           styles.textStyle.text
         ),
         _react2.default.createElement(
@@ -160,10 +169,10 @@ var ReactGauge = (function (_React$Component) {
           _react2.default.createElement('circle', { r: styles.needleCircle.r,
             cx: styles.needleCircle.cx,
             cy: styles.needleCircle.cy,
-            fill: this.colors.red }),
+            fill: this.props.colors.red }),
           _react2.default.createElement('path', { style: styles.needleStyle,
             d: styles.needlePath.d,
-            stroke: this.colors.red,
+            stroke: this.props.colors.red,
             strokeWidth: styles.needlePath.strokeWidth })
         )
       );
@@ -171,8 +180,8 @@ var ReactGauge = (function (_React$Component) {
   }]);
 
   return ReactGauge;
-})(_react2.default.Component);
+}(_react2.default.Component);
 
 exports.default = ReactGauge;
 
-ReactGauge.defaultProps = { width: 500, height: 250, min: 0, max: 100, value: 0 };
+ReactGauge.defaultProps = defaultProps;
