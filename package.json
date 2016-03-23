@@ -1,6 +1,6 @@
 {
   "name": "react-gauge",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ReactJS Gauge Component",
   "main": "dist/react-gauge.js",
   "scripts": {
