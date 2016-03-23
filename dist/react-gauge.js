@@ -142,11 +142,10 @@ var ReactGauge = function (_React$Component) {
     key: 'render',
     value: function render() {
       var styles = this.getStyles();
-      console.log(styles.needlePath.d);
       var viewBox = "0 0 " + this.state.width + ' ' + this.state.height;
       return _react2.default.createElement(
         'svg',
-        { width: this.state.width, viewBox: viewBox, maxHheight: this.state.height },
+        { width: this.state.width, viewBox: viewBox, height: this.state.height },
         _react2.default.createElement('circle', { r: styles.outerCircle.r,
           cx: styles.outerCircle.cx,
           cy: styles.outerCircle.cy,

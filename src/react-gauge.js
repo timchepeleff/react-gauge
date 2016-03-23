@@ -118,7 +118,7 @@ export default class ReactGauge extends React.Component {
     let styles = this.getStyles();
 		const viewBox = "0 0 " + this.state.width + ' ' + this.state.height;
     return(
-      <svg width={ this.state.width } viewBox={viewBox} maxHheight={ this.state.height }>
+      <svg width={ this.state.width } viewBox={viewBox} height={ this.state.height }>
         <circle r={ styles.outerCircle.r }
             cx={ styles.outerCircle.cx  }
             cy={ styles.outerCircle.cy }
