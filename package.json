@@ -1,6 +1,6 @@
 {
   "name": "react-gauge",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "ReactJS Gauge Component",
   "main": "dist/react-gauge.js",
   "scripts": {
@@ -20,8 +20,8 @@
     "url": "https://github.com/michigan-com/react-gauge/issues"
   },
   "homepage": "https://github.com/michigan-com/react-gauge#readme",
-  "dependencies": {
-    "react": "^0.14.2"
+  "peer-dependencies": {
+    "react": "0.x"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.0.15",
