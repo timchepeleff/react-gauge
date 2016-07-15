@@ -20,7 +20,7 @@
     "url": "https://github.com/michigan-com/react-gauge/issues"
   },
   "homepage": "https://github.com/michigan-com/react-gauge#readme",
-  "peer-dependencies": {
+  "peerDependencies": {
     "react": "0.x"
   },
   "devDependencies": {
