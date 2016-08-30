@@ -13,6 +13,12 @@ const defaultProps = {
 		orange: '#AA7139',
 		red: '#AA4639'
 	},
+	gradient:[
+    		{p:0,color:"#ff0000"},
+    		{p:50,color:"#ffff00"},
+    		{p:75,color:"#ffc107"},
+    		{p:100,color:"#00920b"},
+  	],
 	width: 500,
 	height: 250,
 	min: 0,
@@ -119,10 +125,17 @@ export default class ReactGauge extends React.Component {
 		const viewBox = "0 0 " + this.state.width + ' ' + this.state.height;
     return(
       <svg width={ this.state.width } viewBox={viewBox} height={ this.state.height }>
+       <defs>
+          <linearGradient id="linear" x1="0%" y1="0%" x2="100%" y2="0%">
+          {this.props.gradient.map((item)=>(
+            <stop offset={item.p+"%"} stopColor={item.color}/>
+          ))}
+          </linearGradient>
+        </defs>
         <circle r={ styles.outerCircle.r }
             cx={ styles.outerCircle.cx  }
             cy={ styles.outerCircle.cy }
-            fill={ this.props.colors.blue }>
+            fill="url(#linear)">
         </circle>
         <circle r={ styles.innerCircle.r }
             cx={ styles.innerCircle.cx }
