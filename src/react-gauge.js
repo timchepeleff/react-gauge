@@ -123,10 +123,11 @@ export default class ReactGauge extends React.Component {
   render() {
     let styles = this.getStyles();
 		const viewBox = "0 0 " + this.state.width + ' ' + this.state.height;
+    const uniqueId= this._reactInternalInstance._rootNodeID;
     return(
       <svg width={ this.state.width } viewBox={viewBox} height={ this.state.height }>
        <defs>
-          <linearGradient id="linear" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id={uniqueId} x1="0%" y1="0%" x2="100%" y2="0%">
           {this.props.gradient.map((item)=>(
             <stop offset={item.p+"%"} stopColor={item.color}/>
           ))}
@@ -135,7 +136,7 @@ export default class ReactGauge extends React.Component {
         <circle r={ styles.outerCircle.r }
             cx={ styles.outerCircle.cx  }
             cy={ styles.outerCircle.cy }
-            fill="url(#linear)">
+            fill={`url(#${uniqueId})`}>
         </circle>
         <circle r={ styles.innerCircle.r }
             cx={ styles.innerCircle.cx }
