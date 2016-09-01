@@ -1,10 +1,10 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -23,33 +23,25 @@ function roundTwoDecimals(number) {
   return Math.round(number * 100) / 100;
 }
 
-var defaultProps = {
-  colors: {
-    blue: '#255C69',
-    green: '#2A7F40',
-    orange: '#AA7139',
-    red: '#AA4639'
-  },
-  width: 500,
-  height: 250,
-  min: 0,
-  max: 100,
-  value: 0
+var _colorArc = function _colorArc(gradient, color, id) {
+  return gradient.length == 0 ? color : 'url(#linear-gradient)';
 };
 
-var ReactGauge = (function (_React$Component) {
+var ReactGauge = function (_React$Component) {
   _inherits(ReactGauge, _React$Component);
 
   function ReactGauge(props) {
     _classCallCheck(this, ReactGauge);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ReactGauge).call(this, props));
+    var _this = _possibleConstructorReturn(this, (ReactGauge.__proto__ || Object.getPrototypeOf(ReactGauge)).call(this, props));
 
     _this.state = {
       width: _this.props.width,
       height: _this.props.height
     };
-    window.onresize = _this.resizeGauge.bind(_this);
+    _this.resizeGauge = _this.resizeGauge.bind(_this);
+    // window.onresize = this.resizeGauge;
+    window.addEventListener('resize', _this.resizeGauge, false);
     return _this;
   }
 
@@ -59,23 +51,25 @@ var ReactGauge = (function (_React$Component) {
       this.resizeGauge();
     }
   }, {
+    key: 'componentWillUnMount',
+    value: function componentWillUnMount() {
+      window.removeEventListener('resize', this.resizeGauge);
+    }
+  }, {
     key: 'resizeGauge',
     value: function resizeGauge() {
 
       var width = this.props.width;
       var height = this.props.height;
 
-      if (window.innerWidth > ReactGauge.defaultProps.width) {
-        if (this.state.width < ReactGauge.defaultProps.width) {
-          this.setState({
-            width: width || ReactGauge.defaultProps.width,
-            height: height || ReactGauge.defaultProps.width * .5
-          });
+      if (window.innerWidth > width) {
+        if (this.state.width < width) {
+          this.setState({ width: width, height: height });
         }
       } else {
         this.setState({
-          width: width || window.innerWidth,
-          height: height || window.innerWidth * .5
+          width: window.innerWidth,
+          height: window.innerWidth * .5
         });
       }
     }
@@ -139,17 +133,45 @@ var ReactGauge = (function (_React$Component) {
       return { outerCircle: outerCircle, innerCircle: innerCircle, needleCircle: needleCircle, needlePath: needlePath, needleStyle: needleStyle, textStyle: textStyle };
     }
   }, {
+    key: 'renderGradientIfPresent',
+    value: function renderGradientIfPresent() {
+      var gradient = this.props.gradient;
+
+      if (!gradient.length) return null;
+
+      var uniqueId = this._reactInternalInstance._rootNodeID;
+      return _react2.default.createElement(
+        'defs',
+        null,
+        _react2.default.createElement(
+          'linearGradient',
+          { id: 'linear-gradient', x1: '0%', y1: '0%', x2: '100%', y2: '0%' },
+          gradient.map(function (item, index) {
+            return _react2.default.createElement('stop', { offset: item.p + "%", stopColor: item.color, key: 'stop-' + index });
+          })
+        )
+      );
+    }
+  }, {
     key: 'render',
     value: function render() {
+      console.log(this.state.width);
       var styles = this.getStyles();
       var viewBox = "0 0 " + this.state.width + ' ' + this.state.height;
+      var uniqueId = this._reactInternalInstance._rootNodeID;
+      var _props = this.props;
+      var gradient = _props.gradient;
+      var primaryColor = _props.primaryColor;
+
+      var fillName = _colorArc(gradient, primaryColor, uniqueId);
       return _react2.default.createElement(
         'svg',
         { width: this.state.width, viewBox: viewBox, height: this.state.height },
+        this.renderGradientIfPresent(),
         _react2.default.createElement('circle', { r: styles.outerCircle.r,
           cx: styles.outerCircle.cx,
           cy: styles.outerCircle.cy,
-          fill: this.props.colors.blue }),
+          fill: fillName }),
         _react2.default.createElement('circle', { r: styles.innerCircle.r,
           cx: styles.innerCircle.cx,
           cy: styles.innerCircle.cy,
@@ -180,8 +202,21 @@ var ReactGauge = (function (_React$Component) {
   }]);
 
   return ReactGauge;
-})(_react2.default.Component);
+}(_react2.default.Component);
 
+ReactGauge.defaultProps = {
+  colors: {
+    blue: '#255C69',
+    green: '#2A7F40',
+    orange: '#AA7139',
+    red: '#AA4639'
+  },
+  primaryColor: '#255C69',
+  gradient: [],
+  width: 500,
+  height: 250,
+  min: 0,
+  max: 100,
+  value: 0
+};
 exports.default = ReactGauge;
-
-ReactGauge.defaultProps = defaultProps;

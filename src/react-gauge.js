@@ -1,3 +1,5 @@
+'use strict';
+
 import React from 'react';
 
 // http://stackoverflow.com/a/11832950/1337683
@@ -6,24 +8,24 @@ function roundTwoDecimals(number) {
 }
 
 
-const defaultProps = {
-	colors: {
-		blue: '#255C69',
-		green: '#2A7F40',
-		orange: '#AA7139',
-		red: '#AA4639'
-	},
-	primaryColor:'#255C69',
-	gradient:[],
-	width: 500,
-	height: 250,
-	min: 0,
-	max: 100,
-	value: 0
-};
-const  _colorArc=(gradient,color,id)=> gradient.length == 0 ? color:`url(#${id})`;
+const  _colorArc = (gradient, color, id) => gradient.length == 0 ? color : `url(#linear-gradient)`;
 
 export default class ReactGauge extends React.Component {
+  static defaultProps = {
+  	colors: {
+  		blue: '#255C69',
+  		green: '#2A7F40',
+  		orange: '#AA7139',
+  		red: '#AA4639'
+  	},
+  	primaryColor:'#255C69',
+  	gradient:[],
+  	width: 500,
+  	height: 250,
+  	min: 0,
+  	max: 100,
+  	value: 0
+  };
 
   constructor(props) {
     super(props);
@@ -31,11 +33,16 @@ export default class ReactGauge extends React.Component {
       width: this.props.width,
       height: this.props.height
     }
-    window.onresize = this.resizeGauge.bind(this);
+    this.resizeGauge = this.resizeGauge.bind(this);
+    window.addEventListener('resize', this.resizeGauge, false);
   }
 
   componentWillMount() {
     this.resizeGauge();
+  }
+
+  componentWillUnMount() {
+    window.removeEventListener('resize', this.resizeGauge);
   }
 
 	resizeGauge() {
@@ -43,18 +50,15 @@ export default class ReactGauge extends React.Component {
 		const width = this.props.width;
 		const height = this.props.height;
 
-    if (window.innerWidth > ReactGauge.defaultProps.width) {
-      if (this.state.width < ReactGauge.defaultProps.width) {
-        this.setState({
-          width: width || ReactGauge.defaultProps.width,
-          height: height || ReactGauge.defaultProps.width * .5
-        });
+    if (window.innerWidth > width) {
+      if (this.state.width < width) {
+        this.setState({ width, height });
       }
 
     } else {
       this.setState({
-        width: width || window.innerWidth,
-        height: height || window.innerWidth * .5
+        width: window.innerWidth,
+        height: window.innerWidth * .5
       });
     }
   }
@@ -117,21 +121,32 @@ export default class ReactGauge extends React.Component {
     return { outerCircle, innerCircle, needleCircle, needlePath, needleStyle, textStyle }
   }
 
+  renderGradientIfPresent() {
+    const { gradient } = this.props;
+    if (!gradient.length) return null;
+
+    const uniqueId= this._reactInternalInstance._rootNodeID;
+    return (
+       <defs>
+        <linearGradient id='linear-gradient' x1="0%" y1="0%" x2="100%" y2="0%">
+          {gradient.map((item, index) => (
+            <stop offset={item.p + "%"} stopColor={item.color} key={`stop-${index}`}/>
+          ))}
+        </linearGradient>
+      </defs>
+    )
+  }
+
   render() {
-    let styles = this.getStyles();
+    console.log(this.state.width)
+    const styles = this.getStyles();
 		const viewBox = "0 0 " + this.state.width + ' ' + this.state.height;
     const uniqueId= this._reactInternalInstance._rootNodeID;
-    const {gradient,primaryColor}= this.props;
-    const fillName=_colorArc(gradient,primaryColor,uniqueId);
+    const { gradient, primaryColor } = this.props;
+    const fillName = _colorArc(gradient, primaryColor, uniqueId);
     return(
       <svg width={ this.state.width } viewBox={viewBox} height={ this.state.height }>
-         <defs>
-          <linearGradient id={uniqueId} x1="0%" y1="0%" x2="100%" y2="0%">
-
-            {gradient.map((item) => (<stop offset={item.p + "%"} stopColor={item.color}/>))}
-
-          </linearGradient>
-        </defs>
+        { this.renderGradientIfPresent()}
         <circle r={ styles.outerCircle.r }
             cx={ styles.outerCircle.cx  }
             cy={ styles.outerCircle.cy }
@@ -165,4 +180,3 @@ export default class ReactGauge extends React.Component {
     )
   }
 }
-ReactGauge.defaultProps = defaultProps;
