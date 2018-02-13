@@ -1,6 +1,8 @@
 'use strict';
 
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { render } from 'react-dom';
 
 import Gauge from '../dist/react-gauge';
